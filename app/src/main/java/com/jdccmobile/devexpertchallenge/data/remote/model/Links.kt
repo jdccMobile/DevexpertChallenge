@@ -1,4 +1,4 @@
-package com.jdccmobile.devexpertchallenge.data.model
+package com.jdccmobile.devexpertchallenge.data.remote.model
 
 data class Links(
     val download: String,
