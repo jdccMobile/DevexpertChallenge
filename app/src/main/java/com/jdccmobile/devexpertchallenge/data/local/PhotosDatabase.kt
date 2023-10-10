@@ -24,6 +24,9 @@ interface PhotosDao{
     @Query("SELECT * FROM LocalPhoto")
     fun getPhotos(): Flow<List<LocalPhoto>>
 
+    @Query("SELECT * FROM LocalPhoto WHERE id = :photoId")
+    suspend fun getDetailPhoto(photoId: String): Photo
+
     @Insert
     suspend fun insertAll(photos: List<LocalPhoto>)
 

@@ -7,8 +7,7 @@ class RemoteDataSource {
     suspend fun getPhotos() : List<Photo>{
         return RetrofitServiceFactory
             .makeRetrofitService()
-            .getNewPhotos("", 1, 10)
+            .getNewPhotos("cEkjo_dtwlhCZV6jR0mjjlQ4_Ic3rTSfDrZ7u24IB0s", 1, 10)
             .map { it.toPhoto() }
-        // todo con inyeccion de depencias utilizar el contexto para poner el api key desde secrets
     }
 }

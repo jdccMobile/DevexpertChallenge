@@ -18,10 +18,10 @@ class PhotoAdapter(private val items: MutableList<Photo?>, private val favClicke
         return ViewHolder(view)
     }
 
-    override fun getItemCount(): Int = items?.size ?: 0
+    override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, photoPos: Int) {
-        val item = items?.get(photoPos)
+        val item = items[photoPos]
         holder.bind(item)
 
         holder.binding.ivPhoto.setOnClickListener {
@@ -35,7 +35,7 @@ class PhotoAdapter(private val items: MutableList<Photo?>, private val favClicke
 
     fun updateData(photos: List<Photo>) {
         items.clear()
-        items?.addAll(photos)
+        items.addAll(photos)
         notifyDataSetChanged()
     }
 

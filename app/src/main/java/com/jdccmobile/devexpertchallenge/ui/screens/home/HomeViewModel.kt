@@ -1,7 +1,6 @@
 package com.jdccmobile.devexpertchallenge.ui.screens.home
 
 import com.jdccmobile.devexpertchallenge.data.model.Photo
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,8 +12,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(private val repository: PhotosRepository) : ViewModel() {
 
     private val _state = MutableLiveData(UiState()) // setter
-    val state: LiveData<UiState> =
-        _state // getter, lo podemos observar desde fuera pero modificar solo desde aqui
+    val state: LiveData<UiState> = _state // getter, lo podemos observar desde fuera pero modificar solo desde aqui
     // desde el vm no deberiamos poder acceder a los contextos porque los contextos pueden desparecer y el vm seguir vivo afectando a la ux
 
 
@@ -25,23 +23,8 @@ class HomeViewModel(private val repository: PhotosRepository) : ViewModel() {
             repository.movies.collect{photo ->
                 _state.value = UiState(photos = photo)
             }
-
         }
     }
-
-
-    fun onPhotoClick(photo: Photo?) {
-        viewModelScope.launch {
-            if (photo != null) {
-                repository.updatePhoto(photo.copy(isFavorite = !photo.isFavorite))
-
-            } else {
-                Log.e("JD", "Photo is null: $photo")
-            }
-        }
-
-    }
-
     data class UiState(
         var isLoading: Boolean = false,
         val photos: List<Photo> = emptyList()

@@ -1,5 +1,6 @@
 package com.jdccmobile.devexpertchallenge.ui.screens.home
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -15,6 +16,7 @@ import com.jdccmobile.devexpertchallenge.data.local.PhotosDatabase
 import com.jdccmobile.devexpertchallenge.data.model.Photo
 import com.jdccmobile.devexpertchallenge.data.remote.RemoteDataSource
 import com.jdccmobile.devexpertchallenge.databinding.ActivityHomeBinding
+import com.jdccmobile.devexpertchallenge.ui.screens.detail.DetailActivity
 
 class HomeActivity : AppCompatActivity() {
 
@@ -53,7 +55,9 @@ class HomeActivity : AppCompatActivity() {
         photosRecycler = binding.recycler
         photosRecycler.layoutManager = LinearLayoutManager(this)
         photoAdapter = PhotoAdapter(mutableListOf<Photo?>()) { photo ->
-            viewModel.onPhotoClick(photo)
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra("idPhoto", photo?.id)
+            startActivity(intent)
         }
         photosRecycler.adapter = photoAdapter
     }
@@ -69,14 +73,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setPhotosAdapter(uiState: HomeViewModel.UiState) {
-        if (uiState.photos != null) {
-            photoAdapter.updateData(uiState.photos)
-        } else {
-
-            // todo que hacer cuando haya null
-            // todo ocultar recycler view
-            // todo poner boton para realizar una peticion de nuevo + texto diciendo que hubo un error
-        }
+        photoAdapter.updateData(uiState.photos)
     }
 
 

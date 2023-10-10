@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">DevexpertChallenge</string>
+    <string name="unsplash_photos">Unsplash Photos</string>
+    <string name="description">Description</string>
+    <string name="username">Username</string>
+    <string name="likes">Likes</string>
+    <string name="color">Color</string>
+    <string name="size">Size</string>
+    <string name="id">ID</string>
+    <string name="favorite_icon">favorite icon</string>
 </resources>

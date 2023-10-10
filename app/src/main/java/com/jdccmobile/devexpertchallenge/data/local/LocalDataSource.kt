@@ -6,8 +6,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class LocalDataSource(private val dao: PhotosDao){
+
     val photos: Flow<List<Photo>> = dao.getPhotos().map { photos ->
         photos.map { it.toPhoto() }
+    }
+
+    suspend fun getDetailPhoto(idPhoto: String) : Photo{
+        return dao.getDetailPhoto(idPhoto)
     }
 
     suspend fun updatePhoto(photo: Photo){

@@ -17,6 +17,10 @@ class PhotosRepository(
         localDataSource.updatePhoto(photo)
     }
 
+    suspend fun getDetailPhoto(idPhoto: String) : Photo{
+        return localDataSource.getDetailPhoto(idPhoto)
+    }
+
     suspend fun requestPhotos(){
         val isDbEmpty = localDataSource.count() == 0
         if(isDbEmpty){localDataSource.insertAll(remoteDataSource.getPhotos())}
