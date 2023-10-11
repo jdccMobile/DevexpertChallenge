@@ -20,12 +20,19 @@ import com.jdccmobile.devexpertchallenge.data.remote.RemoteDataSource
 import com.jdccmobile.devexpertchallenge.databinding.ActivityDetailBinding
 import com.squareup.picasso.Picasso
 
+
+
 class DetailActivity : AppCompatActivity() {
+
+    companion object {
+        const val ID_PHOTO = "ID_PHOTO"
+        const val COLOR_PHOTO = "COLOR_PHOTO"
+    }
 
     private lateinit var binding: ActivityDetailBinding
     private lateinit var viewModel: DetailViewModel
-    private var colorPhoto = "#000000"
     private var toolbarPhoto: Photo? = null
+    private lateinit var colorPhoto: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,33 +40,18 @@ class DetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        val idPhoto = intent.getStringExtra("idPhoto")
-
+        val idPhoto = intent.getStringExtra(ID_PHOTO)
+        colorPhoto = intent.getStringExtra(COLOR_PHOTO)!!
         val db = Room.databaseBuilder(this, PhotosDatabase::class.java, "photos-db").build()
+        val photosRepository = PhotosRepository(localDataSource = LocalDataSource(db.photosDao()), remoteDataSource = RemoteDataSource())
 
-        val photosRepository = PhotosRepository(
-            localDataSource = LocalDataSource(db.photosDao()),
-            remoteDataSource = RemoteDataSource()
-        )
+        setToolbar()
 
-        viewModel = viewModels<DetailViewModel> {
-            DetailViewModelFactory(
-                photosRepository,
-                idPhoto!!
-            )
-        }.value
-
+        viewModel = viewModels<DetailViewModel> { DetailViewModelFactory(photosRepository, idPhoto!!) }.value
         viewModel.state.observe(this) { uiState ->
             toolbarPhoto = uiState.photo
-            colorPhoto = toolbarPhoto?.color ?: "#000000"
-            binding.tvPhotoInfo.text = buildSpannedString {
-                appendInfo(R.string.description, toolbarPhoto?.description ?: "Without description2")
-                appendInfo(R.string.username, toolbarPhoto?.userName ?: "Anonymous")
-                appendInfo(R.string.likes, toolbarPhoto?.likes.toString())
-                appendInfo(R.string.size, "${toolbarPhoto?.width} x ${toolbarPhoto?.height}")
-                appendInfo(R.string.id, "${toolbarPhoto?.id}")
-                appendInfo(R.string.color, colorPhoto)
-            }
+
+            printPhotoText()
             Picasso.get().load(toolbarPhoto?.urls).into(binding.ivPhotoToolbar)
 
             setFabFavIcon()
@@ -68,13 +60,44 @@ class DetailActivity : AppCompatActivity() {
                 setFabFavIcon()
             }
         }
+    }
 
+    private fun setToolbar() {
         supportActionBar?.apply {
-            title = "Unsplash.com"
+            title = getString(R.string.unsplash_com)
             setDisplayShowHomeEnabled(true) // on back button press, it will navigate to parent activity
             setDisplayHomeAsUpEnabled(true) // show back button on toolbar
-            setTitleColorAccordingBackground()
+
+            val colorId = if (colorPhoto < "#808080") R.color.white // #808080 -> gray
+            else R.color.black
+            val spannableTitle = SpannableString(title)
+            val colorSpan = ForegroundColorSpan(ContextCompat.getColor(this@DetailActivity, colorId))
+            spannableTitle.setSpan(
+                colorSpan,
+                0,
+                (title as String).length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            title = spannableTitle
         }
+    }
+
+    private fun printPhotoText() {
+        binding.tvPhotoInfo.text = buildSpannedString {
+            appendInfo(R.string.description, toolbarPhoto?.description ?: getString(R.string.without_description))
+            appendInfo(R.string.username, toolbarPhoto?.userName ?: getString(R.string.anonymous))
+            appendInfo(R.string.likes, toolbarPhoto?.likes.toString())
+            appendInfo(R.string.size, "${toolbarPhoto?.width} x ${toolbarPhoto?.height}")
+            appendInfo(R.string.id, "${toolbarPhoto?.id}")
+            appendInfo(R.string.color, colorPhoto)
+        }
+    }
+
+    private fun setFabFavIcon() {
+        if (toolbarPhoto?.isFavorite == true)
+            binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav))
+        else
+            binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav_border))
     }
 
     private fun SpannableStringBuilder.appendInfo(stringRes: Int, value: String) {
@@ -85,28 +108,7 @@ class DetailActivity : AppCompatActivity() {
         appendLine("$value \n")
     }
 
-    private fun setFabFavIcon() {
-        if (toolbarPhoto?.isFavorite == true)
-            binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav))
-        else
-            binding.fabFavorite.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_fav_border))
-    }
 
-    private fun setTitleColorAccordingBackground() {
-        if (colorPhoto < "#808080") setCustomTitleColor(R.color.white) // #808080 -> gray
-        else setCustomTitleColor(R.color.black)
-    }
 
-    private fun setCustomTitleColor(colorId: Int) {
-        val spannableTitle = SpannableString(title)
-        val colorSpan = ForegroundColorSpan(ContextCompat.getColor(this@DetailActivity, colorId))
-        spannableTitle.setSpan(
-            colorSpan,
-            0,
-            (title as String).length,
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-        this.title = spannableTitle
-    }
 
 }

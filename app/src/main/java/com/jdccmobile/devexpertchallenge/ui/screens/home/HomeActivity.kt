@@ -3,13 +3,11 @@ package com.jdccmobile.devexpertchallenge.ui.screens.home
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
-import com.jdccmobile.devexpertchallenge.R
 import com.jdccmobile.devexpertchallenge.data.PhotosRepository
 import com.jdccmobile.devexpertchallenge.data.local.LocalDataSource
 import com.jdccmobile.devexpertchallenge.data.local.PhotosDatabase
@@ -17,6 +15,8 @@ import com.jdccmobile.devexpertchallenge.data.model.Photo
 import com.jdccmobile.devexpertchallenge.data.remote.RemoteDataSource
 import com.jdccmobile.devexpertchallenge.databinding.ActivityHomeBinding
 import com.jdccmobile.devexpertchallenge.ui.screens.detail.DetailActivity
+import com.jdccmobile.devexpertchallenge.ui.screens.detail.DetailActivity.Companion.COLOR_PHOTO
+import com.jdccmobile.devexpertchallenge.ui.screens.detail.DetailActivity.Companion.ID_PHOTO
 
 class HomeActivity : AppCompatActivity() {
 
@@ -32,11 +32,7 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        val db = Room.databaseBuilder(
-            this,
-            PhotosDatabase::class.java,
-            "photos-db"
-        ).build()
+        val db = Room.databaseBuilder(this, PhotosDatabase::class.java, "photos-db").build()
         val photosRepository = PhotosRepository(
             localDataSource = LocalDataSource(db.photosDao()),
             remoteDataSource = RemoteDataSource()
@@ -56,7 +52,8 @@ class HomeActivity : AppCompatActivity() {
         photosRecycler.layoutManager = LinearLayoutManager(this)
         photoAdapter = PhotoAdapter(mutableListOf<Photo?>()) { photo ->
             val intent = Intent(this, DetailActivity::class.java)
-            intent.putExtra("idPhoto", photo?.id)
+            intent.putExtra(ID_PHOTO, photo?.id)
+            intent.putExtra(COLOR_PHOTO, photo?.color)
             startActivity(intent)
         }
         photosRecycler.adapter = photoAdapter
@@ -77,10 +74,5 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_toolbar, menu)
-        // todo add search hint
-        return super.onCreateOptionsMenu(menu)
-    }
 
 }

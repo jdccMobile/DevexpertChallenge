@@ -11,7 +11,13 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun `Addition is correct`() {
+        // GIVEN (dadas ciertas condiciones)
+
+        // WHEN (realizamos la accion que vamos a comprobar)
+
+        // THEN (hacemos las comprobaciones que hizo el when)
+
         assertEquals(4, 2 + 2)
     }
 }

@@ -19,7 +19,6 @@ class DetailViewModel(private val repository: PhotosRepository, private val idPh
         viewModelScope.launch {
             val photo = repository.getDetailPhoto(idPhoto)
             _state.value = UiState(photo = photo)
-            Log.d("JD", "DetailViewModel init: $idPhoto, ${_state.value}")
         }
     }
 
@@ -28,7 +27,6 @@ class DetailViewModel(private val repository: PhotosRepository, private val idPh
             if (photo != null) {
                 repository.updatePhoto(photo.copy(isFavorite = !photo.isFavorite))
                 _state.value = UiState(repository.getDetailPhoto(idPhoto))
-                Log.d("JD", "DetailViewModel onPhotoClick: $idPhoto, ${_state.value}")
             } else {
                 Log.e("JD", "DetailViewmodel onPhotoClick: Photo is null: $photo")
             }
